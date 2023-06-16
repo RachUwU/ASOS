@@ -40,15 +40,5 @@ public class Operator {
         } catch (IOException e) {
             System.out.println("Error creating operator");
         }
-        try {
-            Operator operator = new Operator("localhost", 12345);
-
-            // Отправляем несколько заданий
-            operator.sendTask(10, 5, "+", 2);
-            operator.sendTask(12, 4, "*", 5);
-            operator.sendTask(8, 0, "/", 3); // Ошибка деления на 0
-        } catch (IOException e) {
-            System.out.println("Error creating operator");
-        }
     }
 }

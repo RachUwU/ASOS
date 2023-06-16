@@ -1,6 +1,4 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 
 public class Agent extends Thread {
@@ -18,18 +16,18 @@ public class Agent extends Thread {
     public void run() {
         try {
             while (true) {
-                // Получаем задание от сервера
-                double a = in.readDouble();
-                double b = in.readDouble();
-                String op = in.readUTF();
-                int sec = in.readInt();
-
-                // Выполняем задание
-                double result = calculate(a, b, op, sec);
-
-                // Отправляем результат на сервер
-                out.writeDouble(result);
-                out.flush();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String inputLine = bufferedReader.readLine();
+                if(isValidString(inputLine)){
+                    double result = splitAndCalculate(inputLine);
+                    // Отправляем результат на сервер
+                    String str = "Result: " + result;
+                    out.writeUTF(str);
+                    out.flush();
+                }
+                else{
+                    //TODO: if not valid
+                }
             }
         } catch (IOException e) {
             // В случае ошибки закрываем соединение
@@ -40,44 +38,10 @@ public class Agent extends Thread {
             }
         }
     }
-//    public void run() {
-//        try {
-////            while (true) {
-//                // Получаем задание от сервера
-//            String str = in.readUTF();
-//            str = "esfeses";
-//            System.out.println("a222aa" + str);
-//            double d = 2;
-//            out.writeDouble(d);
-//            out.flush();
-////            if(isValidString(str)){
-////                    double result = splitAndCalculate(str);
-////                    str += " " + result;
-////                    // Отправляем результат на сервер
-////                    System.out.println("aaa" + str);
-////                    out.writeUTF(str);
-////                    out.flush();
-////                }
-////                else{
-////                    out.writeUTF("Incorrect input");
-////                    out.flush();
-////                }
-//////            }
-//        } catch (IOException e) {
-//            // В случае ошибки закрываем соединение
-//            try {
-//                socket.close();
-//            } catch (IOException ex) {
-//                System.out.println("Error closing socket");
-//            }
-//        }catch (ArithmeticException | IllegalArgumentException e){
-//            System.out.println("Arithmetic error");
-//        }
-//    }
     public static double splitAndCalculate(String str) {
         String[] parts = str.split("\\s+"); // Разбиваем строку на части по пробелу
-        int first = Integer.parseInt(parts[0]); // Пытаемся распознать первое число
-        int second = Integer.parseInt(parts[2]); // Пытаемся распознать второе число
+        double first = Double.parseDouble(parts[0]); // Пытаемся распознать первое число
+        double second = Double.parseDouble((parts[2])); // Пытаемся распознать второе число
         int timeout = Integer.parseInt(parts[3]); // Пытаемся распознать третье число
         String operator = parts[1];
         return calculate(first, second, operator, timeout);

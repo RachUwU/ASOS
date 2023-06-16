@@ -1,9 +1,7 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 
 public class Server {
     private final ServerSocket serverSocket;
@@ -18,17 +16,9 @@ public class Server {
             Socket socket = serverSocket.accept();
             System.out.println("New agent connected");
             //получение данных от клиента
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String inputLine;
-            inputLine = in.readLine();
-            if(inputLine.equals("quit")) break;
-            System.out.println("Received message: " + inputLine);
-            // Создание потока для агента
             Agent agent = new Agent(socket);
             agent.start();
-            //отправка данных обратно клиенту
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.println(inputLine);
+
         }
     }
 
