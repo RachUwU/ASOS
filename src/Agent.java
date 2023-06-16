@@ -18,15 +18,20 @@ public class Agent extends Thread {
             while (true) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String inputLine = bufferedReader.readLine();
-                if(isValidString(inputLine)){
-                    double result = splitAndCalculate(inputLine);
-                    // Отправляем результат на сервер
-                    String str = "Result: " + result;
-                    out.writeUTF(str);
+                try {
+                    if (isValidString(inputLine)) {
+                        double result = splitAndCalculate(inputLine);
+                        // Отправляем результат на сервер
+                        String str = "Result: " + result + "\n\r";
+                        out.writeUTF(str);
+                        out.flush();
+                    } else {
+                        out.writeUTF("Input errors\n\r");
+                        out.flush();
+                    }
+                } catch (ArithmeticException e){
+                    out.writeUTF("Division by zero is forbidden\n\r");
                     out.flush();
-                }
-                else{
-                    //TODO: if not valid
                 }
             }
         } catch (IOException e) {
@@ -71,6 +76,7 @@ public class Agent extends Thread {
         }
     }
     public static boolean isValidString(String str) {
+        if(str == null) return false;
         String[] parts = str.split("\\s+"); // Разбиваем строку на части по пробелу
         if (parts.length != 4) { // Если количество частей не равно 3, значит, строка не соответствует формату
             return false;
