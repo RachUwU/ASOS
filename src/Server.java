@@ -15,7 +15,6 @@ public class Server {
             // Подключение нового агента
             Socket socket = serverSocket.accept();
             System.out.println("New agent connected");
-            //получение данных от клиента
             Agent agent = new Agent(socket);
             agent.start();
 

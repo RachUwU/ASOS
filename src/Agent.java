@@ -18,6 +18,7 @@ public class Agent extends Thread {
             while (true) {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String inputLine = bufferedReader.readLine();
+                if(inputLine.equals("quit"))break;
                 try {
                     if (isValidString(inputLine)) {
                         double result = splitAndCalculate(inputLine);
